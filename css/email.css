@@ -1,0 +1,10 @@
+
+#body2 {
+	background-image: url(images/1.jpg);
+	top: 0px;
+	padding: 0px;
+	width: 90%;
+	margin: 0px auto;/* can giữa*/
+	font-family: tahoma; 
+	font-size: 13;
+}

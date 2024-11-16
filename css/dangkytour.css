@@ -1,0 +1,30 @@
+
+
+#khung{
+    font-size: 20px;
+    font-family: Arial;
+    color: #fc7a00;
+} 
+
+#thongtinll{
+	color: black; 
+    font-family: Times New Roman;
+    font-size: 16px;
+}
+
+#khung_dienthongtin{
+	background-image: url(images/1.jpg);
+}
+
+table #thongtinll
+{
+	background: none;
+}
+
+div .dangkitour{
+	background-color: #adf7f7;
+}
+
+.menu {
+
+}

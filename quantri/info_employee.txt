@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<?php
+		include('connection.php');
+
+	?>
+
+	<?php
+		if(isset($_POST['btnok']))
+		{
+			$ten=$_POST['txttennv'];
+			$cmnd=$_POST['txtcmndnv'];
+			$dc=$_POST['txtdcnv'];
+			$sdt=$_POST['txtsdtnv'];
+			$nvl=$_POST['nvl'];
+			$ns=$_POST['ns'];
+
+		 $sua="UPDATE employees Set NAME='$ten', IDCARD='$cmnd', ADDRESS='$dc', PHONENUMBER='$sdt', PART_DAY='$nvl', BIRTHDAY='$ns' where ID='1001000'";
+		 $connect->query($sua);
+		 echo 'thành công';
+		}
+	?>
+
+	<?php
+		$sql="select*from employees where ID='1001000'";
+		$khach=$connect->query($sql);
+		foreach ($khach as $kh) {
+
+	?>
+
+	<form method="post">
+		<table>
+			<tr>
+				<td>Tên NV:</td>
+				<td><input type="text" name="txttennv" value="<?php echo $kh['NAME']?>"></td>
+			</tr>
+			<tr>
+				<td>CMND</td>
+				<td><input type="text" name="txtcmndnv" value="<?php echo $kh['IDCARD']?>"></td>
+			</tr>
+			<tr>
+			<td>Ði?n tho?i</td>
+			<td><input type="tel" name="txtsdtnv" value="<?php echo $kh['PHONENUMBER']?>"></td>
+			</tr>
+			<td>Ð?a ch?</td>
+			<td><input type="text" name="txtdcnv" value="<?php echo $kh['ADDRESS']?>"></td>
+			</tr>
+			<tr>
+				<td>Ngày vào làm</td>
+				<td><input type="date" name="nvl" value="<?php echo $kh['PART_DAY']?>"></td>
+			</tr>
+			<tr>
+				<td>Ngày sinh</td>
+				<td><input type="date" name="ns" value="<?php echo $kh['BIRTHDAY']?>"></td>
+			</tr>
+			<?php 
+				}
+			?>
+			<tr>
+				<td><input type="submit" name="btnok" value="S?a"></td>
+			</tr>
+
+		</table>
+	</form>
+</body>
+</html>
