@@ -97,3 +97,11 @@
   width: 50vw;
   margin-bottom: 10px;
 }
+
+.pointer{
+  cursor: pointer;
+}
+
+.link-info{
+  color: #0B5DA7 !important;
+}

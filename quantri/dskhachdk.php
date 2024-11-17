@@ -49,9 +49,9 @@
 			<th class="mailtour" width="15%" align="left">
 				Ghi chú
 			</th>
-			<th class="mailtour" width="8%" align="left">
+			<!-- <th class="mailtour" width="8%" align="left">
 				Chức năng
-			</th>
+			</th> -->
 		</tr>
 		<?php
 			include("pagination_dskhach.php");
@@ -67,11 +67,11 @@
 				<td><?php echo date('d/m/Y', strtotime($customer['BIRTHDAY'])) ?></td>
 				<td><?php echo $customer['EMAIL'] ?></td>
 				<td><?php echo $customer['NOTES'] ?></td>
-				<td align="center">
+				<!-- <td align="center">
 					<button type="button" class="btn btn-danger center" onclick="confDelete()">
 						<a id="demo" href="delete_customer.php?id=<?php echo $customer['ID']?>">Xóa</a>
 					</button>
-				</td>
+				</td> -->
 
 			</tr>
 			<?php 

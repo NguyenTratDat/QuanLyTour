@@ -153,10 +153,6 @@
 				$tours= $connect->query($sql);
 				?>
 
-				
-				
-
-
 				<div class="container cot">
 					<h4>Kết quả tìm kiếm</h4>
 					<div class="row" ng-hide="display">

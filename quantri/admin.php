@@ -24,12 +24,15 @@
 
 			<div class="login loginT" align="right">
 				<h5>
+
 					<?php 
 					if (isset($_SESSION['name']) && $_SESSION['name']){
 						echo 'Xin chào, ['.$_SESSION['name']."]<br/>";
 					}
 					else{
 						echo "Bạn chưa đăng nhập";
+
+						header("Location: index.php");
 					}
 					?>
 

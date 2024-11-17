@@ -36,6 +36,7 @@
             SELECT employees.*, login.USERNAME
             FROM employees
                 LEFT JOIN login ON login.ID = employees.ID
+            WHERE POSITION NOT IN ('SUPERADMIN', 'CUSTOMER')
             ORDER BY employees.ID DESC 
             LIMIT $start, $limit
         ";

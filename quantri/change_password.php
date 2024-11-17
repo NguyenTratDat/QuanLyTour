@@ -42,6 +42,28 @@
 				$confirm_pass=$_POST['txtconfirmpass'];
 			}
 
+			if($new_pass != $confirm_pass){
+				$info = "Xác nhận mật khẩu không đúng!";
+				$flag = 0;
+
+				?>
+					<script> alert("<?php echo $info; ?>"); </script>
+					<script>window.location = '?quanly=change_password'</script>
+				<?php
+			}
+
+			$pattern_pwd = "/^(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*\d).+$/";
+
+			if (!preg_match($pattern_pwd, $new_pass)) {
+				$info = "Mật khẩu phải bao gồm kí tự in hoa, có cả số và chữ!";
+				$flag = 0;
+
+				?>
+					<script> alert("<?php echo $info; ?>"); </script>
+					<script>window.location = '?quanly=change_password'</script>
+				<?php
+			}
+
 			$sql   = " SELECT * FROM `login` where ID = '$user_id' ";
 			$vara  = $connect->query($sql);
 
@@ -49,10 +71,6 @@
 				$pass_csdl = $a['PASSWORD'];
 			}
 			
-			if($new_pass != $confirm_pass){
-				$info = "Xác nhận mật khẩu không đúng!";
-				$flag = 0;
-			}
 
 			if(md5($old_pass) != $pass_csdl){
 				$info = "Mật khẩu hiện tại không đúng!";
@@ -91,18 +109,18 @@
 		<form method="post" action="change_password.php" >
 
 			<label for="username">
-				Password cũ
-				<input type="password" name="txtoldpass" id="password" placeholder="Mật khẩu phải viết hoa 1 kí tự đầu, có số và chữ"  required="required" />
+				Mật khẩu cũ <span style="color:red">*</span>
+				<input type="password" name="txtoldpass" id="password"  required="required" />
 			</label>
 
 			<label for="password">
-				Password mới
-				<input type="password" name="txtnewpass" id="password" placeholder="Mật khẩu phải viết hoa 1 kí tự đầu, có số và chữ"  required="required" />
+				Mật khẩu mới <span style="color:red">*</span>
+				<input type="password" name="txtnewpass" id="password" placeholder="Mật khẩu phải bao gồm kí tự in hoa, có cả số và chữ"  required="required" />
 			</label>
 
 			<label for="password">
-				Confirm Password 
-				<input type="password" name="txtconfirmpass" id="password" placeholder="Mật khẩu phải viết hoa 1 kí tự đầu, có số và chữ"  required="required" />
+				Xác nhận Mật khẩu <span style="color:red">*</span>
+				<input type="password" name="txtconfirmpass" id="password" placeholder="Mật khẩu phải bao gồm kí tự in hoa, có cả số và chữ"  required="required" />
 			</label>
 		
 			<div class="center">

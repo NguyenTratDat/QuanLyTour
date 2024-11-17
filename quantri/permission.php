@@ -14,7 +14,7 @@ else
 			 
 			if ($permission == 'USER') 
 			{ 
-		// Nếu không phải admin thì xuất thông báo echo "Bạn không đủ quyền truy cập vào trang này
+				// Nếu không phải admin thì xuất thông báo echo "Bạn không đủ quyền truy cập vào trang này
 				echo "Bạn không đủ quyền truy cập vào trang này";
 	 			echo "<a href='index.php'>Click để trở lại trang chủ</a>";	
 	 			exit();

@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<?php 
-		include("permission.php");
+		include("permission.php"); 
 	?>
 	<title></title>
 </head>
@@ -30,10 +30,10 @@
 				Họ tên
 			</th>
 			<th class="listtour"  align="left">
-				CMND
+				Email
 			</th>
 			<th class="listtour"  align="left">
-				Địa chỉ
+				CMND
 			</th>
 			<th class="listtour"  align="left">
 				Điện thoại 
@@ -50,33 +50,68 @@
 			</th>
 
 			<th class="listtour"  align="left">
-				Chức năng
+				Hoạt động
 			</th>
+
+			<?php if($_SESSION['position'] != 'USER'){ ?>
+
+				<th class="listtour" align="left">
+					Chức năng
+				</th>
+
+			<?php }  ?>
 		</tr>
+
 		<?php
 			include("pagination_listemployees.php");
 			while ($employee = mysqli_fetch_assoc($employees)){		
 		?>
 			<tr>
 				<td><?php echo $employee['ID'] ?></td>
-				<td><?php echo $employee['USERNAME'] ?></td>
-				<td><?php echo $employee['NAME'] ?></td>
 
+				<td>
+
+					<?php if($_SESSION['position'] == 'SUPERADMIN'){ ?>
+						<a class="link-info" href="?quanly=show_employee&user_id=<?php echo $employee['ID'] ?>"> <?php echo $employee['USERNAME'] ?> </a>
+					<?php } else{  ?>
+						<?php if($employee['POSITION'] != 'USER'){ ?>
+							<a class="link-info" href="?quanly=show_employee&user_id=<?php echo $employee['ID'] ?>"> <?php echo $employee['USERNAME'] ?> </a>
+						<?php } else{  ?>
+							<?php echo $employee['USERNAME'] ?>
+						<?php }  ?>
+					<?php }  ?>
+
+				</td>
+				<td><?php echo $employee['NAME'] ?></td>
+				<td><?php echo $employee['EMAIL'] ?></td>
 				<td><?php echo $employee['IDCARD'] ?></td>
-				<td><?php echo $employee['ADDRESS'] ?></td>
 				<td><?php echo $employee['PHONENUMBER'] ?></td>
 				<td align="center"><?php echo date('d/m/Y', strtotime($employee['BIRTHDAY'])) ?></td>
 				
 				<td align="center"><?php echo date('d/m/Y', strtotime($employee['PART_DAY'])) ?></td>
 				<td><?php echo $employee['POSITION'] ?></td>
-				
-				<td>
-					<button type="button" class="btn btn-info" ><a href="create_account.php?id=<?php echo $employee['ID'] ?>">Reset Password</a></button>
-					<button value="Xóa" class="btn btn-danger" onclick="confDelete()">
-						<a id="demo" href="delete_employee.php?id=<?php echo $employee['ID'] ?>">Xóa
-						</a>
-					</button>
+
+				<td align="center">
+
+					<?php if($_SESSION['position'] == 'SUPERADMIN'){ ?>
+						<input class="pointer" type="checkbox" value="1" onclick="confUpdate(<?php echo $employee['ID'] ?>);return false;" <?php echo ($employee['IS_ACTIVE']) ? 'checked="checked"' : '' ?> />
+					<?php } else{  ?>
+
+						<?php if($employee['POSITION'] != 'USER'){ ?>
+							<input class="pointer" disabled="disabled" type="checkbox" value="1" <?php echo ($employee['IS_ACTIVE']) ? 'checked="checked"' : '' ?> />
+						<?php } else{  ?>
+							<input class="pointer" type="checkbox" value="1" onclick="confUpdate(<?php echo $employee['ID'] ?>);return false;" <?php echo ($employee['IS_ACTIVE']) ? 'checked="checked"' : '' ?> />
+						<?php }  ?>
+
+					<?php }  ?>
 				</td>
+
+				<?php if($_SESSION['position'] != 'USER'){ ?>
+					<td align="center">
+						<button type="button" class="btn btn-info" ><a href="create_account.php?id=<?php echo $employee['ID'] ?>">Reset Password</a></button>
+					</td>
+				<?php }  ?>
+				
 			</tr>
 			<?php 
 		}
@@ -108,15 +143,17 @@
 	<br>	
 
 	<script>
-		function confDelete(){
-			if(confirm("Bấm vào nút OK để tiếp tục"))
+		function confUpdate(idUser){
+			if(confirm("Bạn có muốn thay đổi thông tin?"))
 			{
-				document.getElementById("demo").setAttribute('target','');
-			}
-			else
-			{	
-				document.getElementById("demo").setAttribute('href','admin.php?quanly=list_employees');
-				alert("Xóa ko thành công!");
+				$.ajax({
+					url: "delete_employee.php?id="+idUser,
+					context: document.body
+				}).done(function() {
+					alert("Cập nhật thành công!");
+					window.location = '?quanly=list_employees';
+				});
+
 			}
 
 		}
