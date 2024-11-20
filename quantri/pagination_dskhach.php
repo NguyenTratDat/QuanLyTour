@@ -31,5 +31,5 @@
  
         // BƯỚC 5: TRUY VẤN LẤY DANH SÁCH TIN TỨC
         // Có limit và start rồi thì truy vấn CSDL lấy danh sách tin tức
-        $employees = mysqli_query($conn, "select *from customers LIMIT $start, $limit");
+        $employees = mysqli_query($conn, "SELECT customers.*, login.`USERNAME` FROM customers LEFT JOIN login ON login.ID = customers.`ID` LIMIT $start, $limit");
         ?>

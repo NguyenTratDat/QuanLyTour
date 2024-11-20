@@ -5,6 +5,9 @@
 </head>
 <link rel="stylesheet" type="text/css" href="style2.css">
 <?php 
+
+	$flagCustomer = (in_array($_SESSION['position'], ['CUSTOMER'])) ? true: false;
+
 	$id= $_GET['idTour']; 
 	$pathT = getcwd(); $path = str_replace("quantri","images",$pathT);
 	include("connection.php");
@@ -78,6 +81,15 @@
 ?>
 
 <body>
+
+	<?php if($flagCustomer){ ?>
+		<style>  
+			input, select{
+				pointer-events: none;
+			}
+		</style>
+	<?php } ?>
+
 	<form method="post">
 
 		<table class="list-data" align="center" border="1px black solid">
@@ -109,11 +121,17 @@
 				<td>Số người tối đa</td>
 				<td><input type="number" name="txtsonguoi1" size='42' value="<?php echo $tour['MAX_PEOPLE']?>" min="1" max="20"></td>
 			</tr>
-			<tr>
-				<td>Tên file ảnh</td>
-				<td><input type="file" name="txtfileanh1" size='42'  value="<?php echo $tour['IMAGE']?>"></td>
-			</tr>	
-			</tr>
+
+			<?php if(!$flagCustomer){ ?>
+				<tr>
+					<td>Ảnh bìa</td>
+					<td><input type="file" name="txtfileanh1" size='42'  value="<?php echo $tour['IMAGE']?>"></td>
+				</tr>	
+				<tr>
+					<td>Ảnh chi tiết</td>
+					<td><input type="file" name="txtfilechitiet1[]" multiple/></td>
+				</tr>	
+			<?php } ?>
 			<tr>
 				<td>Ngày bắt đầu</td>
 				<td><input type="text" name="txtngaybd" size='42' value="<?php echo $tour['START']?>"></td>
@@ -139,20 +157,30 @@
 				<td><input type="text" name="txtgianguoilon" size='42' value="<?php echo $tour['ADULT_PRICE']?>"></td>
 			</tr>
 			<tr>
-				<td>Chương trình tour</td>
+				<td>Ghi chú</td>
 				<td><input type="text" name="txtchuongtrinhtour" size='42' value="<?php echo $tour['TOUR_PROGRAM']?>" style="width:100%;"></td>
 			</tr>
 			<tr>
-				<td>Xem trước ảnh</td>
+				<td>Chi tiết chương trình</td>
+				<td><input type="text" name="txtpdf" size='42' value="Chưa có file PDF" style="width:100%;"></td>
+			</tr>
+			<tr>
+				<td>Ảnh bìa</td>
 				<td> <img src="<?php echo "../images/".$tour['IMAGE'] ?>" width=300px height=150px></td>
 			</tr>
-			<tr align="center">
-				<td colspan="2">
-					<button class="btn btn-primary btn-custom" name='btnsua'  id="button1">
-						Chỉnh sửa
-					</button>
-				</td>
-			</tr>
+
+			<?php if(!in_array($_SESSION['position'], ['CUSTOMER'])){ ?>
+
+				<tr align="center">
+					<td colspan="2">
+						<button class="btn btn-primary btn-custom" name='btnsua'  id="button1">
+							Chỉnh sửa
+						</button>
+					</td>
+				</tr>
+			
+			<?php } ?>
+
 			<?php } ?>
 		</table>
 		

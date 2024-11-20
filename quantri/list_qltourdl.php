@@ -5,31 +5,51 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+	 
+	<?php
+		$flagCustomer = (in_array($_SESSION['position'], ['CUSTOMER'])) ? true: false; 
+	?>
 	
 	<div class="titleOfTable">
 		<h1 align="center">DANH SÁCH TOUR</h1>
 
-		<button id="add-tour" class="btn btn-primary btn-custom btn-func"><a href="?quanly=add_tour">Thêm mới</a> </button>
+		<?php if(!$flagCustomer){ ?> 
+			<button id="add-tour" class="btn btn-primary btn-custom btn-func"><a href="?quanly=add_tour">Thêm mới</a> </button>
+		<?php } ?>
 	</div>
 
-	<table class="list-data" width="1000px" align="center" border="1 solid" cellpadding="5">
+	<table class="list-data" align="center" border="1 solid" cellpadding="5">
+		<colgroup>  
+			<?php if(!$flagCustomer){ ?>
+				<col width="10%" />
+			<?php } ?>
+			<col  />
+			<col width="10%" />
+			<col width="10%" />
+			<col width="12%" />
+			<col width="15%" />
+		</colgroup>
 		<tr bgcolor="lightblue" style="font-size: 20px">
-			<th class="listtour" width="10%" align="left">
-				Mã Tour
-			</th>
-			<th class="listtour" width="35%" align="left">
+
+			<?php if(!$flagCustomer){ ?>
+				<th class="listtour" align="left">
+					Mã Tour
+				</th>
+			<?php } ?>
+
+			<th class="listtour" align="left">
 				Tên Tour
 			</th>
-			<th class="listtour" width="15%" align="left">
+			<th class="listtour" align="left">
 				Phân loại
 			</th>
-			<th class="listtour" width="10%" align="left">
+			<th class="listtour" align="left">
 				Số người tối đa
 			</th>
-			<th class="listtour" width="12%" align="left">
+			<th class="listtour" align="left">
 				Hình ảnh 
 			</th>
-			<th class="listtour" width="35%" align="left" >
+			<th class="listtour" align="left" >
 				Chức năng
 			</td>
 		</tr>
@@ -38,7 +58,10 @@
 			while ($row = mysqli_fetch_assoc($tours)){
 		?>
 			<tr>
-				<td align="center"><?php echo $row['ID'] ?></td>
+				<?php if(!$flagCustomer){ ?>
+					<td align="center"><?php echo $row['ID'] ?></td>
+				<?php } ?>
+
 				<td><?php echo $row['NAME']?></td>
 				<td align="center"><?php echo $row['KIND_TOUR']?></td>
 				<td align="center"><?php echo $row['MAX_PEOPLE'] ?></td>
@@ -60,7 +83,9 @@
 
 					?>
 
-					<a id="demo" href="delete_tour.php?id=<?php echo $row['ID'] ?>"><input type="button" value="Xóa" class="btn btn-danger" onclick="confDelete()"></a>
+					<?php if(!$flagCustomer){ ?>
+						<a id="demo" href="delete_tour.php?id=<?php echo $row['ID'] ?>"><input type="button" value="Huỷ" class="btn btn-danger" onclick="confDelete()"></a>
+					<?php } ?>
 				</td>
 			</tr>			
 		<?php 

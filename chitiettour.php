@@ -1,4 +1,3 @@
-<?php session_start();?>
 <!DOCTYPE html>
 <html lang="en"  >
 <head>
@@ -73,7 +72,7 @@
 										</div>
 									</td>
 									<td align="right">
-										<p><button class="btn btn-danger" style="width: 200px"><a href="dangkitour.php?idtour=<?php echo $tour['ID']?>">Đặt ngay</button></p>									</td>
+										<p><button class="btn btn-danger" style="width: 200px"><a href="?page=dangkitour&idtour=<?php echo $tour['ID']?>">Đặt ngay</button></p>									</td>
 								</tr>
 							</table>
 						</div>

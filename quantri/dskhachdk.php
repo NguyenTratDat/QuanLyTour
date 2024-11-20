@@ -28,6 +28,9 @@
 			<th class="idCustomer" width="5%" align="left">
 				Mã KH
 			</th>
+			<th class="idCustomer" width="10%" align="left">
+				Tài khoản
+			</th>
 			<th class="nametour" width="10%" align="left">
 				Họ tên
 			</th>
@@ -59,14 +62,15 @@
 					
 			?>
 			<tr>
-				<td><?php echo $customer['ID'] ?></td>
-				<td><?php echo $customer['NAME']?></td>
-				<td><?php echo $customer['IDCARD']?></td>
-				<td><?php echo $customer['ADDRESS'] ?></td>
-				<td><?php echo $customer['PHONENUMBER'] ?></td>
-				<td><?php echo date('d/m/Y', strtotime($customer['BIRTHDAY'])) ?></td>
-				<td><?php echo $customer['EMAIL'] ?></td>
-				<td><?php echo $customer['NOTES'] ?></td>
+				<td><?php echo $customer['ID']; ?></td>
+				<td><?php echo ($customer['USERNAME'])?:'-';?></td>
+				<td><?php echo $customer['NAME'];?></td>
+				<td><?php echo $customer['IDCARD'];?></td>
+				<td><?php echo $customer['ADDRESS']; ?></td>
+				<td><?php echo $customer['PHONENUMBER']; ?></td>
+				<td><?php echo date('d/m/Y', strtotime($customer['BIRTHDAY'])); ?></td>
+				<td><?php echo $customer['EMAIL']; ?></td>
+				<td><?php echo $customer['NOTES']; ?></td>
 				<!-- <td align="center">
 					<button type="button" class="btn btn-danger center" onclick="confDelete()">
 						<a id="demo" href="delete_customer.php?id=<?php echo $customer['ID']?>">Xóa</a>

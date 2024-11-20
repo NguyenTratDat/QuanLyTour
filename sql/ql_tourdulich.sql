@@ -220,12 +220,14 @@ INSERT INTO `tour_details` (`ID`, `START`, `END`, `HOTEL_NAME`, `VEHICLE`, `CHIL
 --
 DROP TABLE IF EXISTS `fullinfo_employees`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `fullinfo_employees`  AS  select `a`.`ID` AS `ID`,`a`.`NAME` AS `NAME`,`a`.`IDCARD` AS `IDCARD`,`a`.`ADDRESS` AS `ADDRESS`,`a`.`PHONENUMBER` AS `PHONENUMBER`,`a`.`POSITION` AS `POSITION`,`a`.`PART_DAY` AS `PART_DAY`,`a`.`BIRTHDAY` AS `BIRTHDAY`,`b`.`POSITION` AS `POWER` from (`employees` `a` join `login` `b`) where `a`.`ID` = `b`.`ID` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `fullinfo_employees`  AS  select `a`.`ID` AS `ID`,`a`.`NAME` AS `NAME`,`a`.`IDCARD` AS `IDCARD`,`a`.`ADDRESS` AS `ADDRESS`,`a`.`PHONENUMBER` AS `PHONENUMBER`,`a`.`POSITION` AS `POSITION`,`a`.`PART_DAY` AS `PART_DAY`,`a`.`BIRTHDAY` AS `BIRTHDAY` from (`employees` `a` join `login` `b`) where `a`.`ID` = `b`.`ID` ;
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc cho view `thongtinchitiettour`
+-- Cấu trúc cho DROP TABLE IF EXISTS `thongtinchitiettour`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `thongtinchitiettour`  AS  select `tours`.`ID` AS `ID`,`tours`.`NAME` AS `NAME`,`tours`.`KIND_TOUR` AS `KIND_TOUR`,`tours`.`MAX_PEOPLE` AS `MAX_PEOPLE`,`tours`.`IMAGE` AS `IMAGE`,`tour_details`.`START` AS `START`,`tour_details`.`END` AS `END`,`tour_details`.`HOTEL_NAME` AS `HOTEL_NAME`,`tour_details`.`VEHICLE` AS `VEHICLE`,`tour_details`.`CHILD_PRICE` AS `CHILD_PRICE`,`tour_details`.`ADULT_PRICE` AS `ADULT_PRICE`,`tour_details`.`TOUR_PROGRAM` AS `TOUR_PROGRAM` from (`tours` join `tour_details`) where `tours`.`ID` = `tour_details`.`ID` ; `thongtinchitiettour`
 --
 DROP TABLE IF EXISTS `thongtinchitiettour`;
 

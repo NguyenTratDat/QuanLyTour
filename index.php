@@ -16,24 +16,33 @@
 <body ng-app="myApp" ng-controller="MyController">
 	
 	<?php 
-	include("connection.php"); 
-	
-	// xóa các session cmnd_ và idcuoi_
-	if(isset($_GET['test']))		
-	{
-		foreach($_SESSION as $khoa=>$value)
+		include("connection.php"); 
+
+		$page = ""; $showDetail = false;
+
+		if(isset($_GET['page'])&&($_GET['page'])!=''){
+			$page= $_GET['page'];
+		}
+		
+		// xóa các session cmnd_ và idcuoi_
+		if(isset($_GET['test']))		
 		{
-			$key= substr($khoa,0,5);
-			if($key=='cmnd_' || $key=='idcuo')
+			foreach($_SESSION as $khoa=>$value)
 			{
-				unset($_SESSION[$khoa]);				
+				$key= substr($khoa,0,5);
+				if($key=='cmnd_' || $key=='idcuo')
+				{
+					unset($_SESSION[$khoa]);				
+				}
 			}
 		}
-	}
+
 	?>
+
 	<div class="container text-xs-center">
 		<?php include("slideshow.php");?>
 	</div>
+
 	<div class="container menu">	
 		<div class="main">
 			<nav id="ttw-hrmenu" class="ttw-hrmenu">
@@ -123,97 +132,83 @@
 										<li><a href="#">Các khách sạn có view đẹp nhất Vũng Tàu!</a></li>
 										<li><a href="#">Ăn gì mặc gì khi đi Đà Lạt</a></li>
 									</ul>
-								</div><!-- /ttw-hrsub-inner -->
-							</div><!-- /ttw-hrsub -->
-						</li>
-						<!-- <li>
-							<a href="#">Liên hệ</a>
-
-							<div class="ttw-hrsub">
-								<div class="ttw-hrsub-inner">
-									<h4 style="font-weight: bold;color: #AFEEEE">Liên hệ</a></h4>
-									<ul>
-										<li><a href="#">54 Triều Khúc - Thanh Xuân - Hà Nội</a></li>
-										<li><a href="#">Mobile: 0986868699</a></li>
-										<li><a href="#">Email: star-tour@gmail.com</a></li>
-									</ul>
 								</div>
 							</div>
-						</li>
- -->
-						<li>
-							<a href="#">Quản lý</a>
-							<div class="ttw-hrsub">
-								<div class="ttw-hrsub-inner">
-									<h4><a href="quantri/index.php" target="blank">Đăng nhập</a></h4>
-								</div>
-							</div><!-- /ttw-hrsub -->
-						</li>
-					</ul>
-				</nav>
-			</div>
+					</li>
+					<li>
+						<a href="#">Quản lý</a>
+						<div class="ttw-hrsub">
+							<div class="ttw-hrsub-inner">
+								<h4><a href="quantri/index.php" target="blank">Đăng nhập</a></h4>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</nav>
 		</div>
-
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-		<script src="js/ttwHorizontalMenu.min.js"></script>
-		<script>
-			$(function() {
-				ttwHorizontalMenu.init();
-			});
-
-			$( "#index-link" ).on( "click", function() {
-				window.location = '?page=trangchu'
-			} );
-
-		</script>				
-		
-
 	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="js/ttwHorizontalMenu.min.js"></script>
+	<script>
+		$(function() {
+			ttwHorizontalMenu.init();
+		});
+
+		$( "#index-link" ).on( "click", function() {
+			window.location = '?page=trangchu'
+		} );
+
+	</script>				
+		
 	<br>
 	<?php
 		error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED); 
-		$searchS = $_POST['seacrh'];
+		$searchS = (@$_POST['seacrh']) ?: '';
 	?>
-	<div class="container" align="right">
-		<div class="searchform cf">
-			<form action="search.php?search=<?php echo $searchS ?>" method="get">
-				<input type="text" placeholder="Nhập tên thành phố bạn muốn tới?" name="search">
-				<button type="submit" name="ok">Tìm kiếm</button>
-			</form>
+
+	<?php if($page == '' || $page == 'trangchu' ) { ?>
+		<div class="container" align="right" style="position: absolute;" >
+			<div class="searchform cf">
+				<form action="search.php?search=<?php echo $searchS ?>" method="get">
+					<input type="text" placeholder="Nhập tên thành phố bạn muốn tới?" name="search">
+					<button type="submit" name="ok">Tìm kiếm</button>
+				</form>
+			</div>
 		</div>
+	<?php } ?>
 
-		<?php 
-
+	<?php 
 		if (isset($_REQUEST['ok'])) 
 		{
-            // Gán hàm addslashes để chống sql injection
+			// Gán hàm addslashes để chống sql injection
 			$search = addslashes($_GET['search']);
 
-            // Nếu $search rỗng thì báo lỗi, tức là người dùng chưa nhập liệu mà đã nhấn submit.
+			// Nếu $search rỗng thì báo lỗi, tức là người dùng chưa nhập liệu mà đã nhấn submit.
 			if (empty($search)) {
 				echo "Yeu cau nhap du lieu vao o trong";
 			} 
 			else
 			{
-                // Dùng câu lênh like trong sql và sứ dụng toán tử % của php để tìm kiếm dữ liệu chính xác hơn.
+				// Dùng câu lênh like trong sql và sứ dụng toán tử % của php để tìm kiếm dữ liệu chính xác hơn.
 				$query = "SELECT * from tours where NAME like '%$search%'";
 
-                // Kết nối sql
+				// Kết nối sql
 				mysqli_connect("localhost", "root", "", "ql_tourdulich");
 
-                // Thực thi câu truy vấn
+				// Thực thi câu truy vấn
 				$sql = mysqli_query($query);
 
-                // Đếm số đong trả về trong sql.
+				// Đếm số đong trả về trong sql.
 				$num = mysqli_num_rows($sql);
 
-                // Nếu có kết quả thì hiển thị, ngược lại thì thông báo không tìm thấy kết quả
+				// Nếu có kết quả thì hiển thị, ngược lại thì thông báo không tìm thấy kết quả
 				if ($num > 0 && $search != "") 
 				{
-                    // Dùng $num để đếm số dòng trả về.
+					// Dùng $num để đếm số dòng trả về.
 					echo "$num ket qua tra ve voi tu khoa <b>$search</b>";
 
-                    // Vòng lặp while & mysql_fetch_assoc dùng để lấy toàn bộ dữ liệu có trong table và trả về dữ liệu ở dạng array.
+					// Vòng lặp while & mysql_fetch_assoc dùng để lấy toàn bộ dữ liệu có trong table và trả về dữ liệu ở dạng array.
 					echo '<table border="1" cellspacing="0" cellpadding="10">';
 					while ($row = mysqli_fetch_assoc($sql)) {
 						echo '<tr>';
@@ -229,25 +224,18 @@
 				}
 			}
 		}
-		?>
-
-
-
-	</div>
-	<br>
+	?>
 
 	<?php
-		$page = ""; $showDetail = false;
-
-		if(isset($_GET['page'])&&($_GET['page'])!=''){
-			$page= $_GET['page'];
-		}
 
 		if($page == 'chitiettour'){
-
 			$showDetail = true;
 			include('chitiettour.php');
-			
+		}
+
+		if($page == 'dangkitour'){
+			$showDetail = true;
+			include('dangkitour.php');	
 		}
 
 	?>
@@ -255,115 +243,115 @@
 	<?php if(!$showDetail){ ?>
 
 		<div class="container cot">
-		<?php 
-			include("pagination.php");
-		?>
-
-		<button type="submit" class="btn btn-info trongnuoc" ng-click="show('trong_nuoc');" >Trong nước</button>
-		<button type="submit" class="btn btn-info ngoainuoc" ng-click="show('ngoai_nuoc');" >Ngoài nước</button>
-
-		<div class="row" ng-hide="display">
-			<?php while ($row = mysqli_fetch_assoc($resultCountry)){ ?>
-
-				<div class="mottin">
-
-					<a href="?page=chitiettour&idTour=<?php echo $row['ID']?>" class="hrefHCM">
-						<div class="vien">
-							<img src="images/<?php echo $row['IMAGE']?>" alt="" class="" height="170px">
-							<b><?php echo $row['NAME']?></b>							
-						</div>
-					</a>
-
-				</div>
-
-			<?php } ?>
-		</div>
-
-		<div id="pagination" align="center" style="color: black" ng-hide="display">
-			<?php
-
-            // PHẦN HIỂN THỊ PHÂN TRANG
-            // BƯỚC 7: HIỂN THỊ PHÂN TRANG
-
-            // nếu current_page > 1 và total_page > 1 mới hiển thị nút prev
-			if ($current_page > 1 && $total_page > 1){
-				echo '<a style="color:black" href="index.php?page='.($current_page-1).'">Prev</a> | ';
-			}
-
-            // Lặp khoảng giữa
-			for ($i = 1; $i <= $total_page; $i++){
-                // Nếu là trang hiện tại thì hiển thị thẻ span
-                // ngược lại hiển thị thẻ a
-				if ($i == $current_page){
-					echo '<span>'.$i.'</span> | ';
-				}
-				else{
-					echo '<a style="color:black" href="index.php?page='.$i.'">'.$i.'</a> | ';
-				}
-			}
-
-            // nếu current_page < $total_page và total_page > 1 mới hiển thị nút prev
-			if ($current_page < $total_page && $total_page > 1){
-				echo '<a style="color:black" href="index.php?page='.($current_page+1).'">Next</a> | ';
-
-			}
-
+			<?php 
+				include("pagination.php");
 			?>
-		</div>		
 
-		<div class="row" ng-show="display">
-			<?php
-			
+			<button type="submit" class="btn btn-info trongnuoc" ng-click="show('trong_nuoc');" >Trong nước</button>
+			<button type="submit" class="btn btn-info ngoainuoc" ng-click="show('ngoai_nuoc');" >Ngoài nước</button>
 
-			while ($rows = mysqli_fetch_assoc($resultGlobal)){
-				?>
-				<div class="mottin">
+			<div class="row" ng-hide="display">
+				<?php while ($row = mysqli_fetch_assoc($resultCountry)){ ?>
 
-					<a href="?page=chitiettour&idTour=<?php echo $rows['ID']?>" class="hrefHCM">
-						<div class="vien">
-							<img src="images/<?php echo $rows['IMAGE']?>" alt="" height="170px">
-							<b><?php echo $rows['NAME']?></b>						
-						</div>
-					</a>
-				</div>
+					<div class="mottin">
+
+						<a href="?page=chitiettour&idTour=<?php echo $row['ID']?>" class="hrefHCM">
+							<div class="vien">
+								<img src="images/<?php echo $row['IMAGE']?>" alt="" class="" height="170px">
+								<b><?php echo $row['NAME']?></b>							
+							</div>
+						</a>
+
+					</div>
+
+				<?php } ?>
+			</div>
+
+			<div id="pagination" align="center" style="color: black" ng-hide="display">
 				<?php
-			}
-			?>
-		</div>
 
-		<div id="pagination1" align="center" style="color: black" ng-show="display">
-			<?php
+				// PHẦN HIỂN THỊ PHÂN TRANG
+				// BƯỚC 7: HIỂN THỊ PHÂN TRANG
 
-            // PHẦN HIỂN THỊ PHÂN TRANG
-            // BƯỚC 7: HIỂN THỊ PHÂN TRANG
-
-            // nếu current_page > 1 và total_page > 1 mới hiển thị nút prev
-			if ($current_page > 1 && $total_page > 1){
-				echo '<a style="color:black" href="index.php?page='.($current_page-1).'">Prev</a> | ';
-			}
-
-            // Lặp khoảng giữa
-			for ($i = 1; $i <= $total_page; $i++){
-                // Nếu là trang hiện tại thì hiển thị thẻ span
-                // ngược lại hiển thị thẻ a
-				if ($i == $current_page){
-					echo '<span>'.$i.'</span> | ';
+				// nếu current_page > 1 và total_page > 1 mới hiển thị nút prev
+				if ($current_page > 1 && $total_page > 1){
+					echo '<a style="color:black" href="index.php?page='.($current_page-1).'">Prev</a> | ';
 				}
-				else{
-					echo '<a style="color:black" href="index.php?page='.$i.'">'.$i.'</a> | ';
+
+				// Lặp khoảng giữa
+				for ($i = 1; $i <= $total_page; $i++){
+					// Nếu là trang hiện tại thì hiển thị thẻ span
+					// ngược lại hiển thị thẻ a
+					if ($i == $current_page){
+						echo '<span>'.$i.'</span> | ';
+					}
+					else{
+						echo '<a style="color:black" href="index.php?page='.$i.'">'.$i.'</a> | ';
+					}
 				}
-			}
 
-            // nếu current_page < $total_page và total_page > 1 mới hiển thị nút prev
-			if ($current_page < $total_page && $total_page > 1){
-				echo '<a style="color:black" href="index.php?page='.($current_page+1).'">Next</a> | ';
+				// nếu current_page < $total_page và total_page > 1 mới hiển thị nút prev
+				if ($current_page < $total_page && $total_page > 1){
+					echo '<a style="color:black" href="index.php?page='.($current_page+1).'">Next</a> | ';
 
-			}
+				}
 
-			?>
+				?>
+			</div>		
 
-		</div>
-	</div>	
+			<div class="row" ng-show="display">
+				<?php
+				
+
+				while ($rows = mysqli_fetch_assoc($resultGlobal)){
+					?>
+					<div class="mottin">
+
+						<a href="?page=chitiettour&idTour=<?php echo $rows['ID']?>" class="hrefHCM">
+							<div class="vien">
+								<img src="images/<?php echo $rows['IMAGE']?>" alt="" height="170px">
+								<b><?php echo $rows['NAME']?></b>						
+							</div>
+						</a>
+					</div>
+					<?php
+				}
+				?>
+			</div>
+
+			<div id="pagination1" align="center" style="color: black" ng-show="display">
+				<?php
+
+				// PHẦN HIỂN THỊ PHÂN TRANG
+				// BƯỚC 7: HIỂN THỊ PHÂN TRANG
+
+				// nếu current_page > 1 và total_page > 1 mới hiển thị nút prev
+				if ($current_page > 1 && $total_page > 1){
+					echo '<a style="color:black" href="index.php?page='.($current_page-1).'">Prev</a> | ';
+				}
+
+				// Lặp khoảng giữa
+				for ($i = 1; $i <= $total_page; $i++){
+					// Nếu là trang hiện tại thì hiển thị thẻ span
+					// ngược lại hiển thị thẻ a
+					if ($i == $current_page){
+						echo '<span>'.$i.'</span> | ';
+					}
+					else{
+						echo '<a style="color:black" href="index.php?page='.$i.'">'.$i.'</a> | ';
+					}
+				}
+
+				// nếu current_page < $total_page và total_page > 1 mới hiển thị nút prev
+				if ($current_page < $total_page && $total_page > 1){
+					echo '<a style="color:black" href="index.php?page='.($current_page+1).'">Next</a> | ';
+
+				}
+
+				?>
+
+			</div>
+		</div>	
 
 	<?php } ?>
 
