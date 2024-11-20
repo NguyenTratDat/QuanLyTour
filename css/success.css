@@ -1,11 +1,15 @@
-
-
-.body {
-	background-color: #ede8d5;
+.center{
+	text-align: center;
 }
-
+.right{
+	text-align: right;
+}
 .title{
 	color: red;
 	font-size: 18px;
 	
+}
+
+#abc td{
+	padding-left: 10px;
 }

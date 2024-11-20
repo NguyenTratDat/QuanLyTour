@@ -16,30 +16,152 @@
 </head>
 
 <?php 
-	include("connection.php");
-	
-	error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
-	
-	if(isset($_GET['idtour']) && !empty($_GET['idtour']))
-	{
-			// Thêm vào session
-		$id5=$_GET['idtour'];
-		$_SESSION['chon_ck'.$id5]=$id5;
 
-	}
-	//print_r($_SESSION);	 
-	
-	//Khai báo giá trị ban đầu, nếu không có thì khi chưa submit câu lệnh insert sẽ báo lỗi
-	$tenkh = "";
-	$cmnd = "";
-	$dchi = "";
-	$ns = "";
-	$sdt = "";
-	$email = "";	
-		
-//Lấy giá trị POST từ form vừa submit
-if (isset($_POST['btndattour'])) 
+include("connection.php");
+
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+
+if(isset($_GET['idtour']) && !empty($_GET['idtour']))
 {
+	$idtour = $_GET['idtour'];
+}
+else{
+	header("Location: index.php");
+}
+
+if (isset($_POST['btndattour'])) 
+{ 	
+
+	$flagOK = true; $arrError = array(); $mgs = "";
+
+	$tenkh   = ($_POST['txttenkh'])      ?: '';
+	$cmnd    = ($_POST['txtcmnd'])       ?: '';
+	$dchi    = ($_POST['txtdiachi'])     ?: '';
+	$ns      = ($_POST['txtns'])         ?: '';
+	$sdt     = ($_POST['txtsdt'])        ?: '';
+	$email   = ($_POST['txtemail'])      ?: '';
+	$nglon   = ($_POST['txtslnguoilon']) ?: 1;
+	$treem   = ($_POST['txtsltreem'])    ?: 0;
+
+	$pattern_mobile   = "/^(?:\+84|0)(?:3[2-9]|5[2-9]|7[0|6-9]|8[1-9]|9[0-9])\d{7}$/";
+	$pattern_email    = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/";
+	$pattern_cmnd     = "/^\d{9}$|^\d{12}$/";
+
+	$dob   = new DateTime($ns);     $today = new DateTime();
+	$age   = $today->diff($dob)->y;
+
+	if (!preg_match($pattern_cmnd, $cmnd)) {
+		$arrError[] = "CMND không hợp lệ!";
+		$_POST['txtcmnd'] = '';
+	}
+	
+	if (!preg_match($pattern_mobile, $sdt)) {
+		$arrError[] = "Số điện thoại không hợp lệ!";
+		$_POST['txtsdt'] = '';
+	}
+
+	if (!preg_match($pattern_email, $email)) {
+		$arrError[] = "Email không hợp lệ!";
+		$_POST['txtemail'] = '';
+	}
+
+	if ($age < 18) {
+		$arrError[] = "Ngày sinh không hợp lệ (>= 18 tuổi)!";
+		$_POST['txtns'] = '';
+	}
+
+	if(count($arrError) > 0){
+
+		foreach ($arrError as $key => $value) {
+			$mgs .= "• ".$value." \n";
+		}
+
+		?>
+			<script>alert( ` <?php echo $mgs; ?> ` )</script>
+		<?php
+	
+	}
+	else{
+		$checkCus_sql = "select * from customers where IDCARD='$cmnd'";
+		$resCheckCus  = $connect->query($checkCus_sql);
+		$countCus     = $resCheckCus->rowcount();
+
+		if(!$countCus){
+			$insertCus_sql = "
+				INSERT INTO `customers`(`NAME`, `IDCARD`, `ADDRESS`, `PHONENUMBER`, `BIRTHDAY`, `EMAIL`) 
+				VALUES ('$tenkh','$cmnd','$dchi','$sdt','$ns','$email')
+			";
+
+			$connect->exec($insertCus_sql);
+
+			$CustomerID = $connect->lastInsertId();
+		}
+		else{
+			foreach($resCheckCus as $info){
+				$CustomerID = $info['ID'];
+			}
+		}
+
+		$checkTour_Available_sql = "
+			SELECT tour_details.*, tours.MAX_PEOPLE, 
+				( SELECT sum(tour_log.TOTAl_PEOPLE) FROM tour_log WHERE tour_log.TOUR_ID = tours.id AND tour_log.STATUS = 'NEW' ) AS Total_Cus
+			FROM tours
+				LEFT JOIN tour_details ON tour_details.id = tours.id
+			WHERE tours.id = '$idtour' AND tours.IS_ACTIVE = 1 AND tour_details.EXPIRED >= NOW()
+		";
+		
+
+		$resTour_Available  = $connect->query($checkTour_Available_sql);
+		if(!$resTour_Available->rowcount()){
+			?>
+				<script>alert( `Tour hiện tại không khả dụng. Quý khách vui lòng thử lại sau! ` )</script>
+			<?php
+		}
+		else{
+
+			foreach($resTour_Available as $tourInfo){
+
+				$Total_Cus    = ($tourInfo['Total_Cus']) ?: 0;
+				$MAX_PEOPLE   = $tourInfo['MAX_PEOPLE'];  $num_people   = $MAX_PEOPLE - $Total_Cus;
+				$CHILD_PRICE  = $tourInfo['CHILD_PRICE']; $total_people = $nglon + $treem;
+				$ADULT_PRICE  = $tourInfo['ADULT_PRICE'];
+
+				if($MAX_PEOPLE < $Total_Cus + $total_people){
+					?>
+						<script>alert( `Vượt quá số lượng người cho phép (SL Còn lại: <?php echo $num_people; ?>  )` )</script>
+					<?php
+				}
+				else{
+					$amount_child = $CHILD_PRICE * $treem; 
+					$amount_adult = $ADULT_PRICE * $nglon;
+					$total = $amount_child + $amount_adult;
+
+					$logTour_sql = "
+						INSERT INTO `tour_log`(`TOUR_ID`, `CUSTOMER_ID`, `CHILDS_AMOUNT`, `ADULTS_AMOUNT`, `TOTAL`, `CODE_PAY`) 	
+						VALUES ('$idtour','$CustomerID','$treem','$nglon','$total', UNIX_TIMESTAMP())
+					";
+
+					if ($connect->exec($logTour_sql)){
+
+						$logId = $connect->lastInsertId();
+
+						$_SESSION['create_tour_log'] = $logId;
+
+						?>
+							<script>window.location = '?page=success'</script>
+						<?php
+					}
+					else{
+						?>
+							<script>alert( `Đã xảy ra lỗi trong quá trình thao tác. Quý khách vui lòng thử lại sau! ` )</script>
+						<?php
+					}
+				}
+			}
+		}
+	}
+
+
 	if(!is_numeric($_POST['txtcmnd']))
 	{?>
 		  <script> alert("chứng minh nhân dân phải là chuỗi số !"); </script>
@@ -52,14 +174,7 @@ if (isset($_POST['btndattour']))
 			<?php
 			}
 		else{
-		if(isset($_POST["txttenkh"])) { $tenkh = $_POST['txttenkh']; }
-		if(isset($_POST["txtcmnd"])) { $cmnd = $_POST['txtcmnd']; }
-		if(isset($_POST["txtdiachi"])) { $dchi = $_POST['txtdiachi']; }
-		if(isset($_POST["txtns"])) { $ns = $_POST['txtns']; }
-		if(isset($_POST["txtsdt"])) { $sdt = $_POST['txtsdt']; }
-		if(isset($_POST["txtemail"])) { $email = $_POST['txtemail']; }
-		if(isset($_POST["txtslnguoilon"])) { $nglon = $_POST['txtslnguoilon']; }
-		if(isset($_POST["txtsltreem"])) { $treem = $_POST['txtsltreem']; }
+		
 
 		//Code xử lý, insert dữ liệu vào table customers
 		$sql3="select * from customers where IDCARD='$cmnd'";
@@ -144,75 +259,66 @@ if (isset($_POST['btndattour']))
  $connect=null;
 ?>
 <body >
-	<form name="dangki" action="dangkitour.php" method="post" >
+	<form name="dangki" action="index.php?page=dangkitour&idtour=<?php echo $idtour; ?>" method="post" >
 		<div class="container menu">	
 
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-			<script src="js/ttwHorizontalMenu.min.js"></script>
-			<script>
-				$(function() {
-					ttwHorizontalMenu.init();
-				});
-			</script>
 
 			<div class="container dangkitour">
-			<div>
 				<div id="khung"><h2>THÔNG TIN LIÊN LẠC</h2></div>
-				<div id="khung_dienthongtin">
-					<table id="thongtinll" align="center" width="1100px" cellpadding="15px" cellspacing="15px">
-						<tr>
-							<td width="10%"></td>
-							<td class="pull-left" height="60px">Tên khách hàng:</td>
-							<td height="60px"><input type="text" name="txttenkh" size="70px" required="required"></td>
-						</tr>
-						<tr>
-							<td width="10%"></td>
-							<td class="pull-left" height="60px">Chứng minh nhân dân:</td>
-							<td height="60px"><input type="text" name="txtcmnd" size="70px" required="required"></td>
-						</tr>
-						<tr>
-							<td width="10%"></td>
-							<td class="pull-left" height="60px">Địa chỉ:</td>
-							<td height="60px"><input type="text" name="txtdiachi" size="70px" required="required"></td>
-						</tr>
-						<tr>
-							<td width="10%"></td>
-							<td class="pull-left" height="60px">Số điện thoại:</td>
-							<td height="60px"><input type="tel" name="txtsdt" size="70px" required="required"></td>
-						</tr>
-						<tr>
-							<td width="10%"></td>
-							<td class="pull-left" height="60px">Ngày sinh:</td>
-							<td height="60px"><input type="date" name="txtns" size="70px" required="required"></td>
-						</tr>
-						<tr>
-							<td width="10%"></td>
-							<td class="pull-left" height="60px">Email:</td>
-							<td height="60px"><input type="email" name="txtemail" size="70px" required="required"></td>
-						</tr>
-						<tr><td width="10%"></td>
-							<td class="pull-left" height="60px" >Số người lớn</td>
-							<td height="60px" width="110px"><input type="number" name="txtslnguoilon" min="1" max="20" value="1"></td>
-						</tr>
-						<tr>
-							<td width="10%"></td>
-							<td class="pull-left" height="60px">Số trẻ em</td>
-							<td height="60px" width="110px"><input type="number" name="txtsltreem" min="0" value="0"></td>
-						</tr>
 
-					</table>
-					<br>	
-					
-					<p align="center"><input onclick="alert('Vui lòng qua bước tiếp theo')" class="btn btn-info" type="submit" name="btndattour" value="Xác Nhận Thông Tin" size="20px"></p>
-					
-					<p align="center">
-					<button class="btn btn-info" ><a href="cart.php?test='true'">Bước Trước</a></button>
-					<button class="btn btn-info"><a href="success.php?test='true'">Bước Tiếp Theo</a></button></p>
-					
-					</<br>
-										
-				</div>		
-			</div>
+					<div id="khung_dienthongtin">
+						<table id="thongtinll" align="center" width="1100px" cellpadding="15px" cellspacing="15px">
+							<tr>
+								<td width="10%"></td>
+								<td class="pull-left" height="60px">Tên khách hàng:</td>
+								<td height="60px"><input type="text" name="txttenkh" size="70px" required="required" value="<?php echo $_POST['txttenkh'];?>"></td>
+							</tr>
+							<tr>
+								<td width="10%"></td>
+								<td class="pull-left" height="60px">Chứng minh nhân dân:</td>
+								<td height="60px"><input type="text" name="txtcmnd" size="70px" required="required" value="<?php echo $_POST['txtcmnd'];?>"></td>
+							</tr>
+							<tr>
+								<td width="10%"></td>
+								<td class="pull-left" height="60px">Địa chỉ:</td>
+								<td height="60px"><input type="text" name="txtdiachi" size="70px" required="required" value="<?php echo $_POST['txtdiachi'];?>"></td>
+							</tr>
+							<tr>
+								<td width="10%"></td>
+								<td class="pull-left" height="60px">Số điện thoại:</td>
+								<td height="60px"><input type="tel" name="txtsdt" size="70px" required="required" value="<?php echo $_POST['txtsdt'];?>"></td>
+							</tr>
+							<tr>
+								<td width="10%"></td>
+								<td class="pull-left" height="60px">Ngày sinh:</td>
+								<td height="60px"><input type="date" class="pull-left" name="txtns" size="70px" required="required" value="<?php echo $_POST['txtns'];?>"></td>
+							</tr>
+							<tr>
+								<td width="10%"></td>
+								<td class="pull-left" height="60px">Email:</td>
+								<td height="60px"><input type="text" name="txtemail" size="70px" required="required" value="<?php echo $_POST['txtemail'];?>"></td>
+							</tr>
+							<tr><td width="10%"></td>
+								<td class="pull-left" height="60px" >Số người lớn</td>
+								<td height="60px" width="110px"><input class="pull-left" type="number" style="width: 100px;" name="txtslnguoilon" min="1" max="20" value="<?php echo ($_POST['txtslnguoilon'])?:1;?>"></td>
+							</tr>
+							<tr>
+								<td width="10%"></td>
+								<td class="pull-left" height="60px">Số trẻ em</td>
+								<td height="60px" width="110px"><input class="pull-left" type="number" style="width: 100px;" name="txtsltreem" min="0" value="<?php echo ($_POST['txtsltreem']) ?: 0;?>"></td>
+							</tr>
+
+						</table>
+						<br>	
+						
+						<p align="center">
+							<input type="submit" class="btn btn-primary" name="btndattour" value="Kiểm tra">
+						</p>
+						
+						<br>
+											
+					</div>	
 			</div>
 		</form>
 

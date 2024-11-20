@@ -9,137 +9,114 @@
 	
 </head>
 
-<?php
-include("connection.php");
-session_start();	  
-
-// xóa các session chon_
-if(isset($_GET['test']))		
-{
-	foreach($_SESSION as $khoa=>$value)
-	{
-		$key= substr($khoa,0,5);
-		if($key=='chon_')
-		{
-			unset($_SESSION[$khoa]);
-
-		}
-	}
-}
-
-	//print_r($_SESSION);
-?>
 <body >
+
+	<?php
+
+		if(!isset($_SESSION['create_tour_log'])){ 
+			?>
+				<script>window.location = '?'</script>
+			<?php
+		}
+
+		$logId = $_SESSION['create_tour_log'];
+
+		$logTour_sql = "
+			SELECT tour_log.TOTAL, tour_log.CODE_PAY, tours.NAME as TourName, tour_log.CHILDS_AMOUNT, tour_log.ADULTS_AMOUNT,
+				tour_details.CHILD_PRICE, tour_details.ADULT_PRICE,
+				customers.NAME as CusName, customers.IDCARD, customers.ADDRESS, customers.BIRTHDAY, customers.EMAIL
+			FROM tour_log
+				LEFT JOIN tours ON tours.id = tour_log.TOUR_ID
+				LEFT JOIN tour_details ON tour_details.id = tours.id
+				LEFT JOIN customers ON customers.ID = tour_log.CUSTOMER_ID
+			WHERE tour_log.id = '$logId' 
+		";
+		
+
+		$resLogTour = $connect->query($logTour_sql);
+
+		foreach($resLogTour as $tourInfo){
+			$CODE_PAY        = $tourInfo['CODE_PAY'];
+			$TourName        = $tourInfo['TourName'];
+
+			$CHILDS_AMOUNT   = $tourInfo['CHILDS_AMOUNT']; $CHILD_PRICE   = $tourInfo['CHILD_PRICE'];
+			$ADULTS_AMOUNT   = $tourInfo['ADULTS_AMOUNT']; $ADULT_PRICE   = $tourInfo['ADULT_PRICE'];
+
+			$TOTAL           = $tourInfo['TOTAL'];
+
+			$CusName         = $tourInfo['CusName'];
+			$IDCARD          = $tourInfo['IDCARD'];
+			$ADDRESS         = $tourInfo['ADDRESS'];
+			$BIRTHDAY        = $tourInfo['BIRTHDAY'];
+			$EMAIL           = $tourInfo['EMAIL'];
+		}
+
+	?>
+
 	<div class="container body">
-		<div class="container ima">
-			<img src="images/thegioi1.jpg" width="1100px" alt="">
-		</div>
+
 		<div class="container">
+
 			<br>
 			<h3 align="center" style="color: red">Chúc mừng bạn đã đặt tour thành công</h3>
 			<h3 align="center" style="color: red">Thông tin của bạn đã được gửi đi. Chúng tôi sẽ sớm liên hệ với bạn</h3>
 			<h3 align="center" style="color: red">Cảm ơn bạn đã tin tưởng dịch vụ của công ty chúng tôi</h3>
-			<!--	<p align="center"><a href="index.php">Bấm vào đây để về lại trang chủ</a></p>-->
+
 			<div class="container" align="center">
-				<br>
+
 				<div class="title">
 					<p>Thông tin thanh toán</p>
 				</div>
+
 				<table width="1000px" align="center" id="abc" border="2px" cellpadding="2px" cellspacing="2px">
-					<th>Mã thanh toán</th>
-					<th>Tên tour</th>			
-					<th>Số lượng người lớn</th>
-					<th>Số lượng trẻ em</th>
-					<th>Tổng thanh toán	</th>			
 					<tr>
-						<?php
-						$sumTotal = 0;
-						foreach($_SESSION as $k=>$v)
-						{
-							$idorder=substr($k,0,7);
+						<th class="center">Mã thanh toán</th>
+						<th class="center">Tên tour</th>			
+						<th class="center">Số lượng người lớn</th>
+						<th class="center">Số lượng trẻ em</th>
+						<th class="center">Tổng thanh toán</th>	
+					</tr>
+					<tr>
+						<td class="center"><?php echo $CODE_PAY ?></td>
+						<td><?php echo $TourName ?></td>
+						<td class="center"><?php echo ( ( $ADULTS_AMOUNT ) ? $ADULTS_AMOUNT . ' x ' . number_format($ADULT_PRICE) : 0 ); ?></td>
+						<td class="center"><?php echo ( ( $CHILDS_AMOUNT ) ? $CHILDS_AMOUNT . ' x ' . number_format($CHILD_PRICE) : 0 );?></td>
+						<td class="right"><?php echo number_format($TOTAL) ?></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td class="right"><b>Tổng tiền: <?php echo number_format($TOTAL) ?> </b></td>
+					</tr>
+				</table>
 
-							if($idorder=='idcuoi_')
-							{
+				<br>
 
-								$sql10="select * from orders where ID='$v'";
-								$varid= $connect->query($sql10);
-								foreach( $varid as $var)
-									{?>
-										<?php 
-				//SELECT `ID`, `NAME`, `KIND_TOUR`, `MAX_PEOPLE`, `IMAGE` FROM `tours` WHERE 1
-										$matour=$var['TOUR_ID'];
-										$sqltt="select NAME from tours where ID='$matour'";
-										$tentour=$connect->query($sqltt);
-										$sumTotal += $var['TOTAL'];				
-										?>
-										<td><?php echo $var['ID']?></td>
-										<td><?php foreach( $tentour as $t) {echo $t['NAME'];} ?></td>
-										<td><?php echo $var['ADULTS_AMOUNT']?></td>
-										<td><?php echo $var['CHILDS_AMOUNT']?></td>
-										<td><?php echo $var['TOTAL']?></td>
-									<?php	}
-								}?>
-								</tr>	<?php
-							}		
-							?>	
-							<tr>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td>Tổng tiền: <?php echo $sumTotal ?></td>
-							</tr>
+				<div class="title"><p>Thông tin liên lạc</p></div>
 
-						</div>
-
+				<div class="container" align="center">
+					<table width="1000px" align="center" id="abc" border="2px">
+						<tr>
+							<th class="center" >Tên khách</th>
+							<th class="center" width="100px">CMND</th>
+							<th class="center" width="200px">Email</th>
+							<th class="center" width="150px">Ngày sinh</th>
+							<th class="center">Địa chỉ</th>
+						</tr>	
+						<tr>
+							<td><?php echo $CusName ?></td>
+							<td class="center"><?php echo $IDCARD ?></td>
+							<td><?php echo $EMAIL ?></td>
+							<td class="center"><?php echo date('d/m/Y', strtotime($BIRTHDAY)); ?></td>
+							<td><?php echo $ADDRESS ?></td>
+						</tr>
 					</table>
-					<br>
-					<div class="title"><p>Thông tin liên lạc</p></div>
-					<div class="container" align="center">
-						<table width="1000px" align="center" id="abc" border="2px">
-							<th align="" height="50px" width="200px">Tên khách</th>
-							<th  height="50px">Chứng minh nhân dân</th>
-							<th  height="50px">Địa chỉ</th>
-							<th height="50px">Ngày sinh</th>
-							<th height="50px">Email</th>
-							<th height="50px">Ghi chú</th>		
-							<tr>
-								<?php
-								foreach($_SESSION as $kcmnd=>$vcmnd)
-								{
-									$gtcmnd=substr($kcmnd,0,5);				
-									if($gtcmnd=='cmnd_')
-									{
-										$sql1="select *from customers where IDCARD='$vcmnd'";
-										$t=$connect->query($sql1);
-										foreach ($t as $a) 
-										{
-											?>
-											<td height="40px"><?php echo $a['NAME']?></td>
-											<td height="40px"><?php echo $a['IDCARD']?></td>
-											<td height="40px"><?php echo $a['ADDRESS']?></td>
-											<td height="40px"><?php echo $a['BIRTHDAY']?></td>
-											<td height="40px"><?php echo $a['EMAIL']?></td>
-											<td height="40px"><?php echo $a['NOTES']?></td>
-										</tr>
-									<?php } 
-								}
-							}
-							?>		
-						</table>
-					</div>
-					<br><br>
-
-
-					<div class="container">
-
-						<button class="btn btn-info" name="ketthuc">
-							<body>
-							<a style = color:red href="index.php?test='true'">Quay về trang chủ</a>
-							</body>	
-							</button>
-					</div>
 				</div>
+
 			</div>
-		</body>
-		</html>
+
+		</div>
+</body>
+</html>

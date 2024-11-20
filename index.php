@@ -18,23 +18,13 @@
 	<?php 
 		include("connection.php"); 
 
-		$page = ""; $showDetail = false;
+		$page = ""; $showDetail = false; 
 
 		if(isset($_GET['page'])&&($_GET['page'])!=''){
 			$page= $_GET['page'];
 		}
-		
-		// xóa các session cmnd_ và idcuoi_
-		if(isset($_GET['test']))		
-		{
-			foreach($_SESSION as $khoa=>$value)
-			{
-				$key= substr($khoa,0,5);
-				if($key=='cmnd_' || $key=='idcuo')
-				{
-					unset($_SESSION[$khoa]);				
-				}
-			}
+		else{
+			unset($_SESSION['create_tour_log']);
 		}
 
 	?>
@@ -232,10 +222,13 @@
 			$showDetail = true;
 			include('chitiettour.php');
 		}
-
-		if($page == 'dangkitour'){
+		else if($page == 'dangkitour'){
 			$showDetail = true;
 			include('dangkitour.php');	
+		}
+		else if($page == 'success'){  
+			$showDetail = true;
+			include('success.php');	
 		}
 
 	?>
@@ -354,8 +347,6 @@
 		</div>	
 
 	<?php } ?>
-
-	
 
 	<br>
 
