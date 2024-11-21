@@ -48,10 +48,9 @@
 .cf:after {
     clear:both;
 }
- 
 
-a,a:visited {
-  color:#fff
+.btn a, .btn a:visited{ 
+    color: #fff;
 }
  
 .searchform {

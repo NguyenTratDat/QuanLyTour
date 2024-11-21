@@ -7,7 +7,6 @@
 	<link rel="stylesheet" type="text/css" href="style2.css">
 </head>
 <?php 
-		session_start();
 
 		if ( (isset($_SESSION['username']) && $_SESSION['username']) || isset($_SESSION['user_id']) && $_SESSION['user_id'] )
 		{

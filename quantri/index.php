@@ -373,23 +373,23 @@ else if(isset($_POST['create_account'])){
 							<form method="post" action="index.php" >
 								<label for="txtName">
 									Họ tên <span style="color:red">*</span>
-									<input autocomplete="off" onchange="onChangeVal()" type="text" name="txtName" id="txtName" required="required" value="<?php echo $_SESSION['create']['name']; ?>" />
+									<input autocomplete="off" onchange="onChangeVal()" type="text" name="txtName" id="txtName" required="required" value="<?php echo @$_SESSION['create']['name']; ?>" />
 								</label>
 								<label for="txtEmail">
 									Email<span style="color:red">*</span>
-									<input autocomplete="off" onchange="onChangeVal()" type="text" name="txtEmail" id="txtEmail" required="required" value="<?php echo $_SESSION['create']['email']; ?>" />
+									<input autocomplete="off" onchange="onChangeVal()" type="text" name="txtEmail" id="txtEmail" required="required" value="<?php echo @$_SESSION['create']['email']; ?>" />
 								</label>
 								<label for="txtUsername">
 									Tên đăng nhập <span style="color:red">*</span>
-									<input autocomplete="off" onchange="onChangeVal()" type="text" name="txtUsername" id="txtUsername" required="required" value="<?php echo $_SESSION['create']['username']; ?>" />
+									<input autocomplete="off" onchange="onChangeVal()" type="text" name="txtUsername" id="txtUsername" required="required" value="<?php echo @$_SESSION['create']['username']; ?>" />
 								</label>
 								<label for="txtChangePwd">
 									Mật khẩu mới <span style="color:red">*</span>
-									<input placeholder="Mật khẩu phải viết hoa 1 kí tự đầu, có số và chữ" autocomplete="off" onchange="onChangeVal()" type="password" name="txtChangePwd" id="txtChangePwd" required="required" value="<?php echo $_SESSION['create']['password']; ?>" />
+									<input placeholder="Mật khẩu phải viết hoa 1 kí tự đầu, có số và chữ" autocomplete="off" onchange="onChangeVal()" type="password" name="txtChangePwd" id="txtChangePwd" required="required" value="<?php echo @$_SESSION['create']['password']; ?>" />
 								</label>
 								<label for="txtReChangePwd">
 									Xác nhận Mật khẩu<span style="color:red">*</span>
-									<input placeholder="Mật khẩu phải viết hoa 1 kí tự đầu, có số và chữ" autocomplete="off" onchange="onChangeVal()" type="password" name="txtReChangePwd" id="txtReChangePwd" required="required" value="<?php echo $_SESSION['create']['re_password']; ?>" />
+									<input placeholder="Mật khẩu phải viết hoa 1 kí tự đầu, có số và chữ" autocomplete="off" onchange="onChangeVal()" type="password" name="txtReChangePwd" id="txtReChangePwd" required="required" value="<?php echo @$_SESSION['create']['re_password']; ?>" />
 								</label>
 								<div>
 									<input type="submit" class="btn btn-primary" name="create_account" value="Kiểm tra" ></input>

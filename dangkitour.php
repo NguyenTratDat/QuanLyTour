@@ -272,41 +272,41 @@ if (isset($_POST['btndattour']))
 							<tr>
 								<td width="10%"></td>
 								<td class="pull-left" height="60px">Tên khách hàng:</td>
-								<td height="60px"><input type="text" name="txttenkh" size="70px" required="required" value="<?php echo $_POST['txttenkh'];?>"></td>
+								<td height="60px"><input type="text" name="txttenkh" size="70px" required="required" value="<?php echo @$_POST['txttenkh'];?>"></td>
 							</tr>
 							<tr>
 								<td width="10%"></td>
 								<td class="pull-left" height="60px">Chứng minh nhân dân:</td>
-								<td height="60px"><input type="text" name="txtcmnd" size="70px" required="required" value="<?php echo $_POST['txtcmnd'];?>"></td>
+								<td height="60px"><input type="text" name="txtcmnd" size="70px" required="required" value="<?php echo @$_POST['txtcmnd'];?>"></td>
 							</tr>
 							<tr>
 								<td width="10%"></td>
 								<td class="pull-left" height="60px">Địa chỉ:</td>
-								<td height="60px"><input type="text" name="txtdiachi" size="70px" required="required" value="<?php echo $_POST['txtdiachi'];?>"></td>
+								<td height="60px"><input type="text" name="txtdiachi" size="70px" required="required" value="<?php echo @$_POST['txtdiachi'];?>"></td>
 							</tr>
 							<tr>
 								<td width="10%"></td>
 								<td class="pull-left" height="60px">Số điện thoại:</td>
-								<td height="60px"><input type="tel" name="txtsdt" size="70px" required="required" value="<?php echo $_POST['txtsdt'];?>"></td>
+								<td height="60px"><input type="tel" name="txtsdt" size="70px" required="required" value="<?php echo @$_POST['txtsdt'];?>"></td>
 							</tr>
 							<tr>
 								<td width="10%"></td>
 								<td class="pull-left" height="60px">Ngày sinh:</td>
-								<td height="60px"><input type="date" class="pull-left" name="txtns" size="70px" required="required" value="<?php echo $_POST['txtns'];?>"></td>
+								<td height="60px"><input type="date" class="pull-left" name="txtns" size="70px" required="required" value="<?php echo @$_POST['txtns'];?>"></td>
 							</tr>
 							<tr>
 								<td width="10%"></td>
 								<td class="pull-left" height="60px">Email:</td>
-								<td height="60px"><input type="text" name="txtemail" size="70px" required="required" value="<?php echo $_POST['txtemail'];?>"></td>
+								<td height="60px"><input type="text" name="txtemail" size="70px" required="required" value="<?php echo @$_POST['txtemail'];?>"></td>
 							</tr>
 							<tr><td width="10%"></td>
 								<td class="pull-left" height="60px" >Số người lớn</td>
-								<td height="60px" width="110px"><input class="pull-left" type="number" style="width: 100px;" name="txtslnguoilon" min="1" max="20" value="<?php echo ($_POST['txtslnguoilon'])?:1;?>"></td>
+								<td height="60px" width="110px"><input class="pull-left" type="number" style="width: 100px;" name="txtslnguoilon" min="1" max="20" value="<?php echo (@$_POST['txtslnguoilon'])?:1;?>"></td>
 							</tr>
 							<tr>
 								<td width="10%"></td>
 								<td class="pull-left" height="60px">Số trẻ em</td>
-								<td height="60px" width="110px"><input class="pull-left" type="number" style="width: 100px;" name="txtsltreem" min="0" value="<?php echo ($_POST['txtsltreem']) ?: 0;?>"></td>
+								<td height="60px" width="110px"><input class="pull-left" type="number" style="width: 100px;" name="txtsltreem" min="0" value="<?php echo (@$_POST['txtsltreem']) ?: 0;?>"></td>
 							</tr>
 
 						</table>

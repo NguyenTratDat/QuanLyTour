@@ -140,27 +140,27 @@
 			
 			<tr>
 				<td>Tên đăng nhập</td>
-				<td><input type="text" name="txtusername" required="required" value="<?php echo $_POST['txtusername'] ?>"></td>
+				<td><input type="text" name="txtusername" required="required" value="<?php echo @$_POST['txtusername'] ?>"></td>
 			</tr>
 			<tr>
 				<td>Tên nhân viên</td>
-				<td><input type="text" name="txttennv" required="required" value="<?php echo $_POST['txttennv'] ?>"></td>
+				<td><input type="text" name="txttennv" required="required" value="<?php echo @$_POST['txttennv'] ?>"></td>
 			</tr>
 			<tr>
 				<td>Email</td>
-				<td><input type="text" name="txtemail" required="required" value="<?php echo $_POST['txtemail'] ?>"></td>
+				<td><input type="text" name="txtemail" required="required" value="<?php echo @$_POST['txtemail'] ?>"></td>
 			</tr>
 			<tr>
 				<td>CMND</td>
-				<td><input type="text" name="txtcmndnv" required="required" value="<?php echo $_POST['txtcmndnv'] ?>"></td>
+				<td><input type="text" name="txtcmndnv" required="required" value="<?php echo @$_POST['txtcmndnv'] ?>"></td>
 			</tr>
 			<tr>
 				<td>Địa chỉ</td>
-				<td><input type="text" name="txtdcnv" required="required" value="<?php echo $_POST['txtdcnv'] ?>"></td>
+				<td><input type="text" name="txtdcnv" required="required" value="<?php echo @$_POST['txtdcnv'] ?>"></td>
 			</tr>
 			<tr>
 				<td>Điện thoại</td>
-				<td><input type="text" name="txtsdtnv" required="required" value="<?php echo $_POST['txtsdtnv'] ?>" ></td>
+				<td><input type="text" name="txtsdtnv" required="required" value="<?php echo @$_POST['txtsdtnv'] ?>" ></td>
 			</tr>
 			<tr>
 				<td>Chức vụ</td>
@@ -177,11 +177,11 @@
 			</tr>
 			<tr>
 				<td>Ngày làm việc</td>
-				<td><input type="date" name="ngayvl" required="required" value="<?php echo $_POST['ngayvl'] ?>"></td>
+				<td><input type="date" name="ngayvl" required="required" value="<?php echo @$_POST['ngayvl'] ?>"></td>
 			</tr>
 			<tr>
 				<td>Ngày sinh</td>
-				<td><input type="date" name="ns" required="required" value="<?php echo $_POST['ns'] ?>"></td>
+				<td><input type="date" name="ns" required="required" value="<?php echo @$_POST['ns'] ?>"></td>
 			</tr>
 			<tr align="center">
 

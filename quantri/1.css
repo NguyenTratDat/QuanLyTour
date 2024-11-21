@@ -11,10 +11,10 @@
 }
 
 .cot .mottin{
-	width: 25%; //độ rộng từng div
-	margin-right: 5%; //khoảng cách giữa các div mottin
-	float-left; //nằm ngang
-	height: 300px; //chiều cao
+	width: 25%; 
+	margin-right: 5%;
+	float:left;
+	height: 300px; 
 
 }
 .jumbotron{
@@ -33,12 +33,6 @@
 	margin-right: 5%
 }
 
-.bonus{
-	 
-}
-
-
-
 
 *,*:after,*:before {
   box-sizing:border-box;
@@ -54,10 +48,9 @@
 .cf:after {
     clear:both;
 }
- 
 
-a,a:visited {
-  color:#fff
+.btn a, .btn a:visited{ 
+    color: #fff;
 }
  
 /*--------------------------------------------------------------
