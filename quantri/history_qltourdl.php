@@ -45,33 +45,26 @@
 	?>
 	
 	<div class="titleOfTable">
-		<h1 align="center">DANH SÁCH TOUR</h1>
-
-		<?php if(!$flagCustomer){ ?> 
-			<button id="add-tour" class="btn btn-primary btn-custom btn-func"><a href="?quanly=add_tour">Thêm mới</a> </button>
-		<?php } ?>
+		<h1 align="center">LỊCH SỬ TOUR</h1>
 	</div>
 
 	<table class="list-data" align="center" border="1 solid" cellpadding="5">
 		<colgroup>  
-			<?php if(!$flagCustomer){ ?>
-				<col width="10%" />
-			<?php } ?>
-			<col  />
 			<col width="10%" />
+			<col width="10%" />
+			<col  />
 			<col width="12%" />
 			<col width="12%" />
 			<col width="12%" />
 			<col width="15%" />
 		</colgroup>
 		<tr bgcolor="lightblue" style="font-size: 20px">
-
-			<?php if(!$flagCustomer){ ?>
-				<th class="listtour" align="left">
-					Mã Tour
-				</th>
-			<?php } ?>
-
+			<th class="listtour" align="left">
+				Mã Thanh toán
+			</th>
+			<th class="listtour" align="left">
+				Mã Tour
+			</th>
 			<th class="listtour" align="left">
 				Tên Tour
 			</th>
@@ -82,9 +75,6 @@
 				Số người tối đa
 			</th>
 			<th class="listtour" align="left">
-				Cho phép hiển thị
-			</th>
-			<th class="listtour" align="left">
 				Trạng thái
 			</th>
 			<th class="listtour" align="left" >
@@ -92,20 +82,15 @@
 			</td>
 		</tr>
 		<?php
-		 	include("pagination_listtour.php");
+		 	include("pagination_history_tour.php");
 			while ($row = mysqli_fetch_assoc($tours)){ // print_r($row); exit;
 		?>
 			<tr>
-				<?php if(!$flagCustomer){ ?>
-					<td align="center"><?php echo $row['ID'] ?></td>
-				<?php } ?>
-
+				<td align="center"><?php echo $row['CODE_PAY'] ?></td>
+				<td align="center"><?php echo $row['ID'] ?></td>
 				<td><?php echo $row['NAME']?></td>
 				<td align="center"><?php echo $row['KIND_TOUR']?></td>
 				<td align="center"><?php echo $row['MAX_PEOPLE'] ?></td>
-				<td align="center">
-					<input class="pointer" type="checkbox" value="1" onclick="confUpdate(<?php echo $row['ID'] ?>, <?php echo $row['IS_ACTIVE'] ?>);return false;" <?php echo ($row['IS_ACTIVE'] == 1) ? 'checked="checked"' : '' ?> />
-				</td>
 				<td align="center">
 					<?php 
 
@@ -131,17 +116,7 @@
 					?>
 				</td>
 				<td align="center">
-
 					<button type="button" class="btn btn-info" ><a href="?quanly=show_tour_details&idTour=<?php echo $row['ID'] ?>" style="color: black">Chi tiết</a></button>
-
-					<?php if(!$flagCustomer){ 
-						
-							if($row['total_people'] > 0 && $flagStatus == 1 ){ ?>
-								<input type="button" value="Huỷ" class="btn btn-danger" disabled="disabled">
-							<?php } else{ ?>
-								<a id="demo" href="delete_tour.php?id=<?php echo $row['ID'] ?>"><input type="button" value="Huỷ" class="btn btn-danger" onclick="confDelete()"></a>
-							<?php } ?>
-					<?php } ?>
 				</td>
 			</tr>			
 		<?php } ?>

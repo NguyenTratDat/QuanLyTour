@@ -230,17 +230,48 @@ else if(isset($_POST['create_account'])){
 	}
 	else{
 		$checkUserName = "
-			SELECT USERNAME
-			FROM login
-			WHERE USERNAME = '".$username."'
+			SELECT customers.ID, login.USERNAME, customers.NAME as CusName
+			FROM customers 
+				LEFT JOIN login ON login.ID = customers.ID
+			WHERE ( customers.EMAIL = '$email' )
+				OR ( USERNAME = '".$username."' AND TYPE = 'CUSTOMER'  )
 			LIMIT 1
+
 		"; 
  
-		$resCheck  = $connect->query($checkUserName); 
+		$resCheck  = $connect->query($checkUserName);  
 
 		if(mysqli_num_rows($resCheck)){ // Check trùng
-			$error_create = "Tên đăng nhập đã tồn tại!";
-			unset($_SESSION['create']['username']);
+
+			while ($row = mysqli_fetch_assoc($resCheck)) {
+				$ID         = ($row['ID']) ?: '';
+				$USERNAME   = ($row['USERNAME']) ?: '';
+				$CusName    = ($row['CusName']) ?: '';
+
+				if($ID != '' && $USERNAME == ''){
+					$insert_Script = "
+						INSERT INTO `login`(`ID`,`USERNAME`, `PASSWORD`, `TYPE`) 
+						VALUES ('$ID','$username',md5('$password'), 'CUSTOMER')
+					"; 
+
+					$resLogin = mysqli_query($connect, $insert_Script);
+
+					$_SESSION['username'] = $username;
+					$_SESSION['user_id']  = $ID;
+					$_SESSION['name']     = $CusName;
+					$_SESSION['position'] = "CUSTOMER";
+
+					unset($_SESSION['create']);
+
+					header("location:admin.php");
+					die();
+
+				}
+				else{
+					$error_create = "Tên đăng nhập đã tồn tại!";
+					unset($_SESSION['create']['username']);
+				}
+			}
 		}
 		else{
 

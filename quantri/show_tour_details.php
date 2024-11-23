@@ -13,6 +13,7 @@ let slideId = ["mySlides1","mySlides2"];
 
 setTimeout(() => {
 	plusSlides(0, 1);
+
 }, 0);
 
 function plusSlides(n, no) {
@@ -171,7 +172,7 @@ function showSlides(n, no) {
 
 				if($resUpdate){
 					?>  
-						<script> alert('Cập nhật thành công!'); </script>
+						<script> alert('Cập nhật thành công!'); location.reload();</script>
 					<?php
 				}
 			}
@@ -273,7 +274,7 @@ function showSlides(n, no) {
 				<td>Chi tiết chương trình</td>
 				<td>  
 					<?php if(@$tour['PDF']){ ?>
-						<a target="_blank" href="<?php echo "../files/".$tour['PDF'] ?>" ><?php echo @$tour['PDF'] ?></a> <br>
+						<a target="_blank" href="<?php echo "../details/".$id."/".$tour['PDF'] ?>" ><?php echo @$tour['PDF'] ?></a> <br>
 					<?php } ?>   
 					
 					<?php if(!$flagCustomer){ ?>
@@ -285,7 +286,6 @@ function showSlides(n, no) {
 			<tr>
 				<td>Ảnh</td>
 				<td> 
-					<!-- <img src="<?php echo "../images/".$tour['IMAGE'] ?>" width=300px height=150px> -->
 
 					<div class="slideshow-container">
 
@@ -314,10 +314,12 @@ function showSlides(n, no) {
 
 						<?php } ?>
 
+						<?php if(@$tour['IMAGE_DETAIL']){ ?>
 							<a class="prev" onclick="plusSlides(-1, 1)">&#10094;</a>
 							<a class="next" onclick="plusSlides(1, 1)">&#10095;</a>
+						<?php } ?>
 
-						</div>
+					</div>
 
 				</td>
 			</tr>

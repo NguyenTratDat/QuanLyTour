@@ -11,9 +11,10 @@
             <li><a href="admin.php">Trang chủ</a></li>   
 
             <?php if($_SESSION['position'] == 'CUSTOMER'){ ?>
-                <li><a href="admin.php?quanly=list_qltourdl">Lịch sử Tour</a></li>   
+                <li><a href="admin.php?quanly=history_qltourdl">Lịch sử Tour</a></li>  
             <?php } else{  ?>
                 <li><a href="admin.php?quanly=list_qltourdl">Tour</a></li>
+                <li><a href="admin.php?quanly=history_qltourdl">Lịch sử Tour</a></li>  
                 <li><a href="admin.php?quanly=dskhachdk">Khách hàng</a></li>
 
                 <?php if($_SESSION['position'] != 'USER'){ ?>

@@ -73,6 +73,10 @@
 				{
 					include('list_qltourdl.php');
 				}
+				if($tam == 'history_qltourdl')
+				{
+					include('history_qltourdl.php');
+				}
 				elseif($tam == 'dskhachdk')
 				{
 					include('dskhachdk.php');

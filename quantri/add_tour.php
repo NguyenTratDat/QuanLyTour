@@ -42,12 +42,21 @@
 					}
 				}
 				
-				$sql = "
+				$insertTour_script = "
 					INSERT INTO `tours`(`NAME`, `KIND_TOUR`, `MAX_PEOPLE`, `IMAGE`) 
 					VALUES ('$ten','$loai','$songuoi','$fileanh')
 				";
 
-				$connect->query($sql);
+				$connect->query($insertTour_script);
+
+				$tourID = $connect->lastInsertId();
+
+				$insertDetail_script = "
+					INSERT INTO `tour_details`(`ID`)
+					VALUES ('$tourID')
+				";
+
+				$connect->query($insertDetail_script);
 
 				?>	
 					<script> alert("Thêm mới thành công !"); </script>

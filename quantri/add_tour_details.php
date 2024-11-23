@@ -44,11 +44,9 @@
 <body>
 
 	<form action="add_tour_details.php" method="POST">
-	<table id="abc">
+	<table class="list-data" width="1000px" align="center" border="1 solid" cellpadding="5">
 		<tr align="center">
-			<td colspan="2">
-				<h1 align="center">Thêm mới chi tiết</h1>
-			</td>
+			<h1 align="center">Thêm mới chi tiết</h1>
 		</tr>
 		<tr>
 			<td>Mã Tour</td>
