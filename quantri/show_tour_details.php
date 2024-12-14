@@ -3,36 +3,83 @@
 <head>
 	<title></title>
 </head>
+
 <link rel="stylesheet" type="text/css" href="style2.css">
 
 <script> 
 
-let slideIndex = [1,1,1];
-let slideId = ["mySlides1","mySlides2"];
-// showSlides(1, 0);
+	let slideIndex = [1,1,1];
+	let slideId = ["mySlides1","mySlides2"];
 
-setTimeout(() => {
-	plusSlides(0, 1);
+	setTimeout(() => {
+		plusSlides(0, 1);
+	}, 0);
 
-}, 0);
+	function plusSlides(n, no) {
+		showSlides(slideIndex[no] += n, no);
+	}
 
-function plusSlides(n, no) {
-  showSlides(slideIndex[no] += n, no);
-}
+	function showSlides(n, no) {
+		try {
+			let i;
+			let x = document.getElementsByClassName(slideId[no]);
 
-function showSlides(n, no) {
-  let i;
-  let x = document.getElementsByClassName(slideId[no]);
+			if (n > x.length) {slideIndex[no] = 1}    
+			if (n < 1) {slideIndex[no] = x.length}
 
-  if (n > x.length) {slideIndex[no] = 1}    
-  if (n < 1) {slideIndex[no] = x.length}
+			for (i = 0; i < x.length; i++) {
+				x[i].style.display = "none";  
+			}
 
-  for (i = 0; i < x.length; i++) {
-     x[i].style.display = "none";  
-  }
+			if(x.hasOwnProperty(slideIndex[no]-1)){
+				x[slideIndex[no]-1].style.display = "block";  
+			}
+			
+		} catch (error) {
+			console.log('showSlides' , error);
+		}
+	}
 
-  x[slideIndex[no]-1].style.display = "block";  
-}
+	function add_Detail(){
+
+		let numT       = $('#count-detail').val();
+		let num        = parseInt(numT) + 1;
+		let numText    = parseInt($( ".detail-content" ).length) + 1;
+
+		let html = `
+			<div class="detail-content" id="detail-content-${num}">
+				<label class="lb-content" id="lb-content-${num}">Đoạn ${numText}</label> | <label class="remove-detail" onclick="remove_Detail('detail-content-${num}');" > <i class="fa fa-times"></i> Xoá</label>
+				<br>
+				<div class="div-detail-content">
+					<div class="detail-1">
+						<textarea style="width:100%;height:75px;" name="txtdetail_${num}" placeholder="Nhập nội dung..."></textarea>
+					</div>
+					<div class="detail-2" ><input accept="image/png, image/jpeg, image/jpg"  type="file" name="txtanhdetail_${num}" size='42' ></div>
+				</div>
+			</div>
+		`;
+
+		$('#td-detail-content').append(html);
+
+		$('#count-detail').val(num++);
+
+	}
+
+	function remove_Detail(id){
+
+		if($('#'+id).length > 0){
+			$('#'+id).remove();
+		}
+
+		let num = ($( ".detail-content" ).length);
+
+		$( ".lb-content" ).each(function( index ) {
+
+			index += 1;
+
+			$(this).html("Đoạn "+ index);
+		});
+	}
 
 </script>
 
@@ -81,7 +128,7 @@ function showSlides(n, no) {
 			}
 			else{
 
-				$uploadImage = ''; $uploadImage_Detail = ''; $uploadPDF = '';
+				$uploadImage = ''; $uploadImage_Detail = ''; $uploadPDF = ''; $uploadDetail_Text = '';
 
 				if( isset($_FILES['txtfileanh1']) ){
 
@@ -155,6 +202,61 @@ function showSlides(n, no) {
 
 				}
 
+				$detail = array();  $checkDetail_Text = array();
+
+				foreach ($tours as $tourT) {
+					$checkDetail_Text = (@$tourT['DETAIL_TEXT']) ? json_decode($tourT['DETAIL_TEXT'], true) : array();
+				}
+
+				foreach ($_POST as $key => $value) {
+
+					if(strpos($key, 'txtdetail_') !== false){
+
+						$keyT = str_replace('txtdetail_','', $key);
+						
+						$randomKey        =  (isset($_POST['keydetail_'.$keyT])) ? $_POST['keydetail_'.$keyT] : uniqid();
+						$detailContent    = $value;
+						$detailImg        = ($_FILES['txtanhdetail_'.$keyT]) ?: '';
+
+						$detail[$randomKey]['content'] = $value;
+						$detail[$randomKey]['image']   = '';
+
+						if(isset($checkDetail_Text[$randomKey]['image'])){
+							$detail[$randomKey]['image'] = $checkDetail_Text[$randomKey]['image'];
+						}
+
+						if(isset($_FILES['txtanhdetail_'.$keyT])){
+
+							$fileanh       = $_FILES['txtanhdetail_'.$keyT];
+							$target_dir    = $pathFile."/".$id."/"."detail/";
+
+							if (!is_dir($pathFile."/".$id."/")) {
+								mkdir($pathFile."/".$id."/", 0777, true);
+							}
+
+							if (!is_dir($target_dir)) {
+								mkdir($target_dir, 0777, true);
+							}
+
+							$fileName       = basename($fileanh["name"]);
+							$fileTmp        = $fileanh["tmp_name"];
+							$target_file    = $target_dir . $fileName;
+
+							if (move_uploaded_file($fileTmp, $target_file)) {
+								$detail[$randomKey]['image'] = $fileName;
+							} 
+
+						}
+					}
+				}
+
+				if(count($detail) > 0){
+
+					$strDetail = json_encode($detail);
+
+					$uploadDetail_Text = ",`DETAIL_TEXT`='$strDetail' ";
+				}
+
 				$sql = "
 					UPDATE tours
 					SET `NAME`='$ten',`KIND_TOUR`='$loai',`MAX_PEOPLE`='$songuoi' $uploadImage
@@ -165,15 +267,35 @@ function showSlides(n, no) {
 
 				$sql1 = "
 					UPDATE `tour_details` 
-					SET `START`='$bd',`END`='$kt',`EXPIRED`='$hn',`HOTEL_NAME`='$ks',`VEHICLE`='$pt',`CHILD_PRICE`='$treem',`ADULT_PRICE`='$nglon',`TOUR_PROGRAM`='$cttour' $uploadPDF $uploadImage_Detail
+					SET `START`='$bd',`END`='$kt',`EXPIRED`='$hn',`HOTEL_NAME`='$ks',`VEHICLE`='$pt',`CHILD_PRICE`='$treem',`ADULT_PRICE`='$nglon',`TOUR_PROGRAM`='$cttour' $uploadPDF $uploadImage_Detail $uploadDetail_Text
 					WHERE ID='$id'
 				";
+
+				// print_r($sql1); exit;
+
 				$resUpdate = $connect->exec($sql1);
 
 				if($resUpdate){
+
 					?>  
-						<script> alert('Cập nhật thành công!'); location.reload();</script>
+						<script> 
+							alert('Cập nhật thành công!'); 
+
+							setTimeout(() => {
+								plusSlides(0, 1);
+							}, 1000);
+						</script>
 					<?php
+
+
+					$sqlT = "
+						SELECT tours.*, tour_details.*
+						FROM `tours`
+						LEFT JOIN tour_details ON tour_details.ID = tours.ID
+						WHERE `tours`.`ID` = '$id' 
+					";
+
+					$tours= $connect->query($sqlT);	
 				}
 			}
 		}
@@ -203,13 +325,12 @@ function showSlides(n, no) {
 					<h1 align="center">Thông tin chi tiết</h1>
 				</td>
 			</tr>
+			<?php 
+				foreach ($tours as $tour) 
+				{
+			?>
 			<tr>
 				<td>Tên tour <span style="color:red">*</span></td>
-				<?php 
-
-					foreach ($tours as $tour) 
-					{
-				?>
 				<td><input required="required" type="text" name="txttentour1" size='42' value="<?php echo @$tour['NAME']?>"  style="width:100%;"></td>
 			</tr>
 			<tr>
@@ -280,6 +401,76 @@ function showSlides(n, no) {
 					<?php if(!$flagCustomer){ ?>
 						<input accept=".pdf, .doc, .docx" type="file" name="txtpdf" size='42' >
 					<?php } ?>  
+					
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Nội dung Chi tiết<br>
+					<button type="button" onclick="add_Detail();" class="btn btn-primary btn-custom">
+						<i class="fa fa-plus"></i>
+						Thêm
+					</button>
+				</td>
+				<td id="td-detail-content">  
+					
+					<?php 
+
+						if(@$tour['DETAIL_TEXT'] && $tour['DETAIL_TEXT'] != ''){
+							$detail          = json_decode($tour['DETAIL_TEXT'], true); 
+							$count_detail    = 0;
+
+							// print_r($detail); exit;
+
+							?>
+								<input type="hidden" id="count-detail" name="count-detail" value="<?php echo count($detail);?>" />
+							<?php
+
+							foreach ($detail as $key => $value) {
+								$content = $value['content'];
+								$image   = ($value['image']) ?: '';
+								$count_detail ++;
+
+								?>
+
+									<div class="detail-content" id="detail-content-<?php echo $count_detail;?>">
+										<label class="lb-content" id="lb-content-<?php echo $count_detail;?>">Đoạn <?php echo $count_detail;?></label><br>
+										
+										<?php if($image != ''){ ?>
+											<iframe width="300" height="200" allowfullscreen style="border-style:none;" src="../js/standalone/pannellum.htm?panorama=../../details/<?php echo $id;?>/detail/<?php echo $image; ?>"></iframe>
+										<?php }
+										?>
+										
+										<div class="div-detail-content">
+											<div class="detail-1">
+												<input type="hidden" value="<?php echo $key;?>" name="keydetail_<?php echo $count_detail;?>" />
+												<textarea style="width:100%;height:75px;" name="txtdetail_<?php echo $count_detail;?>" placeholder="Nhập nội dung..."><?php echo $content; ?></textarea>
+											</div>
+											<div class="detail-2" ><input accept="image/png, image/jpeg, image/jpg"  type="file" name="txtanhdetail_<?php echo $count_detail;?>" size='42' ></div>
+										</div>
+									</div>
+
+								<?php
+
+							}
+
+						}else{ 
+					?>
+						<input type="hidden" id="count-detail" name="count-detail" value="1" />
+						<div class="detail-content" id="detail-content-1">
+							<label class="lb-content" id="lb-content-1">Đoạn 1</label><br>
+							<div class="div-detail-content">
+								<div class="detail-1">
+									<textarea style="width:100%;height:75px;" name="txtdetail_1" placeholder="Nhập nội dung..."></textarea>
+								</div>
+								<div class="detail-2" ><input accept="image/png, image/jpeg, image/jpg"  type="file" name="txtanhdetail_1" size='42' ></div>
+							</div>
+						</div>
+					<?php
+						} 
+					?>
+
+					<!-- <iframe width="600" height="400" allowfullscreen style="border-style:none;" src="../js/standalone/pannellum.htm?panorama=../../images/phuquoc.jpg"></iframe> -->
 					
 				</td>
 			</tr>

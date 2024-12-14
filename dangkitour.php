@@ -134,11 +134,11 @@ if (isset($_POST['btndattour']))
 				else{
 					$amount_child = $CHILD_PRICE * $treem; 
 					$amount_adult = $ADULT_PRICE * $nglon;
-					$total = $amount_child + $amount_adult;
+					$amount_total = $amount_child + $amount_adult;
 
 					$logTour_sql = "
-						INSERT INTO `tour_log`(`TOUR_ID`, `CUSTOMER_ID`, `CHILDS_AMOUNT`, `ADULTS_AMOUNT`, `TOTAL`, `CODE_PAY`) 	
-						VALUES ('$idtour','$CustomerID','$treem','$nglon','$total', UNIX_TIMESTAMP())
+						INSERT INTO `tour_log`(`TOUR_ID`, `CUSTOMER_ID`, `CHILDS_AMOUNT`, `ADULTS_AMOUNT`, `TOTAL`, `TOTAL_PEOPLE`, `CODE_PAY`) 	
+						VALUES ('$idtour','$CustomerID','$treem','$nglon','$amount_total','$total_people' ,UNIX_TIMESTAMP())
 					";
 
 					if ($connect->exec($logTour_sql)){

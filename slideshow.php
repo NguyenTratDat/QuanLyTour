@@ -14,7 +14,7 @@
             margin: auto;
           }
           /* Ẩn các slider */
-          .mySlides {
+          .mySlidesT {
               display: none;
           }
          
@@ -63,30 +63,22 @@
                 <img src="images/logo.png" width="100" alt="Hutech" style="border:none; display:block;" />
               </div>
             </div>
-            <!-- <div class="col-sm-8">
-              <div class="shop-menu pull-right">
-                <ul class="nav navbar-nav">
-                  <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Đăng ký</a></li>
-                  <li><a href="login.html"><i class="fa fa-lock"></i> Đăng nhập</a></li>
-                </ul>
-              </div>
-            </div>
- -->          </div>
+          </div>
       <div class="slideshow-container">       
-        <div class="mySlides fade">
+        <div class="mySlidesT fade">
           <img src="images/banner0.png" style="width:1000px; height: 500px">         
         </div>
  
-        <div class="mySlides fade">
+        <div class="mySlidesT fade">
           <img src="images/banner1.jpg" style="width:1000px; height: 500px">          
         </div>
 
 
-        <div class="mySlides fade">
+        <div class="mySlidesT fade">
           <img src="images/banner2.jpg" style="width:1000px; height: 500px">          
         </div>
 
-        <div class="mySlides fade">
+        <div class="mySlidesT fade">
           <img src="images/banner3.jpg" style="width:1000px; height: 500px">          
         </div>
       </div>
@@ -105,7 +97,7 @@
       // KHai bào hàm hiển thị slide
       function showSlides() {
           var i;
-          var slides = document.getElementsByClassName("mySlides");
+          var slides = document.getElementsByClassName("mySlidesT");
           var dots = document.getElementsByClassName("dot");
           for (i = 0; i < slides.length; i++) {
              slides[i].style.display = "none";  
